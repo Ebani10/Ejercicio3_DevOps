@@ -27,6 +27,7 @@ except FileNotFoundError:
     """
 
 import os
+import sys
 from datetime import datetime
 
 def procesar_datos():
@@ -36,9 +37,10 @@ def procesar_datos():
     archivo_salida = os.path.join(dir_actual, 'resultados.txt')
     archivo_log = os.path.join(dir_actual, 'backup.log')
 
-    # Entrada manual de versión o identificador (Punto D)
-    version_cambio = input("Introduce el identificador o versión del cambio (ej. V1.0): ")
 
+    # Si pasas un argumento al ejecutar, lo toma. Si no, usa "V1.0" por defecto.
+    version_cambio = sys.argv[1] if len(sys.argv) > 1 else os.getenv('APP_VERSION', 'V1.0-auto')
+   
     try:
         # A. LEER INFORMACIÓN
         with open(archivo_entrada, 'r', encoding='utf-8') as f:
