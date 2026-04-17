@@ -1,29 +1,27 @@
 version: 0.2
 
 phases:
-  install:
-    commands:
-      - echo Instalando dependencias...
   pre_build:
     commands:
-      - echo Login en Docker...
-      # Aquí iría el login a ECR si fueras a subir la imagen
+      - echo Iniciando fase de Pre-build...
+      - ls -R  # Esto sirve para verificar que CodeBuild ve tus carpetas
   build:
     commands:
       - echo Construyendo la imagen de Docker...
-      - docker build -t mi-programa-python .
+      # Importante: el punto final indica que use el Dockerfile de la raíz
+      - docker build -t mi-app-python .
       - echo Ejecutando el contenedor...
-      # Ejecutamos el contenedor para procesar los datos
-      - docker run --name ejecucion-tarea mi-programa-python
+      # Corremos el programa pasando la "entrada manual" como argumento
+      - docker run --name ejecucion-proyecto mi-app-python python app/programa.py "Version_Final_Examen"
   post_build:
     commands:
-      - echo Extrayendo resultados del contenedor...
-      # Copiamos los archivos generados dentro del contenedor hacia afuera
-      - docker cp ejecucion-tarea:/app/resultados.txt .
-      - docker cp ejecucion-tarea:/app/backup.log .
-      - echo Proceso finalizado el `date`
+      - echo Extrayendo el log del contenedor...
+      # Copiamos el log generado dentro de la carpeta app del contenedor hacia afuera
+      - docker cp ejecucion-proyecto:/app/backup.log ./backup.log
+      - echo Subiendo log a S3...
+      - aws s3 cp backup.log s3://ebani-act-devops/backup.log
 
 artifacts:
   files:
-    - resultados.txt
     - backup.log
+    - app/resultados.txt
