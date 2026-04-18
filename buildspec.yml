@@ -8,11 +8,10 @@ phases:
   build:
     commands:
       - echo Construyendo la imagen de Docker...
-      # Importante: el punto final indica que use el Dockerfile de la raíz
       - docker build -t mi-app-python .
       - echo Ejecutando el contenedor...
-      # Corremos el programa pasando la "entrada manual" como argumento
-      - docker run --name ejecucion-proyecto mi-app-python python app/programa.py "Version_Final_Examen"
+      # CAMBIO AQUÍ: Eliminamos 'app/' porque el archivo ya está en la raíz del WORKDIR
+      - docker run --name ejecucion-proyecto mi-app-python python programa.py "Version_Final_Examen"
   post_build:
     commands:
       - echo Extrayendo el log del contenedor...
